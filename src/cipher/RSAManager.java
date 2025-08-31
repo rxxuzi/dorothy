@@ -11,7 +11,7 @@ import java.util.*;
 public class RSAManager {
     private static final String PUBLIC_KEY_FILE = "doro_pub.pem";
     private static final String PRIVATE_KEY_FILE = "doro_prv.pem";
-    private static final String RSA_PREFIX = "RSA:";
+    private static final String ENC_PREFIX = "ENC:";
     private static final int KEY_SIZE = 2048;
 
     private KeyPair keyPair;
@@ -95,36 +95,69 @@ public class RSAManager {
     }
 
     public String encrypt(String plainText) throws Exception {
-        // Check text size limit for RSA
-        byte[] textBytes = plainText.getBytes(StandardCharsets.UTF_8);
-        if (textBytes.length > 245) { // RSA-2048 can encrypt max ~245 bytes
-            throw new IllegalArgumentException("Text too long for RSA encryption (max 245 bytes)");
-        }
-
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
-
-        byte[] encrypted = cipher.doFinal(textBytes);
-        return RSA_PREFIX + Base64.getEncoder().encodeToString(encrypted);
+        return encryptHybrid(plainText);
     }
 
     public String decrypt(String encryptedText) throws Exception {
-        if (!encryptedText.startsWith(RSA_PREFIX)) {
-            throw new IllegalArgumentException("Not an RSA encrypted text");
-        }
-
-        String encodedData = encryptedText.substring(RSA_PREFIX.length());
-        byte[] encrypted = Base64.getDecoder().decode(encodedData);
-
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-
-        byte[] decrypted = cipher.doFinal(encrypted);
-        return new String(decrypted, StandardCharsets.UTF_8);
+        return decryptHybrid(encryptedText);
     }
 
     public boolean isEncrypted(String text) {
-        return text != null && text.startsWith(RSA_PREFIX);
+        return text != null && text.startsWith(ENC_PREFIX);
+    }
+    
+    
+    public String encryptAESKey(byte[] aesKey) throws Exception {
+        if (aesKey.length > 245) {
+            throw new IllegalArgumentException("AES key too long for RSA encryption");
+        }
+        
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
+        
+        byte[] encrypted = cipher.doFinal(aesKey);
+        return Base64.getEncoder().encodeToString(encrypted);
+    }
+    
+    public byte[] decryptAESKey(String encryptedKey) throws Exception {
+        byte[] encrypted = Base64.getDecoder().decode(encryptedKey);
+        
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
+        
+        return cipher.doFinal(encrypted);
+    }
+    
+    private String encryptHybrid(String plainText) throws Exception {
+        AESManager aes = new AESManager();
+        
+        String encryptedData = aes.encrypt(plainText);
+        
+        String encryptedKey = encryptAESKey(aes.getKeyBytes());
+        
+        return ENC_PREFIX + encryptedKey + ":" + encryptedData;
+    }
+    
+    private String decryptHybrid(String encryptedText) throws Exception {
+        if (!encryptedText.startsWith(ENC_PREFIX)) {
+            throw new IllegalArgumentException("Not an encrypted text");
+        }
+        
+        String data = encryptedText.substring(ENC_PREFIX.length());
+        
+        int colonIndex = data.indexOf(':');
+        if (colonIndex == -1) {
+            throw new IllegalArgumentException("Invalid encrypted format");
+        }
+        
+        String encryptedKey = data.substring(0, colonIndex);
+        String encryptedData = data.substring(colonIndex + 1);
+        
+        byte[] aesKey = decryptAESKey(encryptedKey);
+        
+        AESManager aes = new AESManager(aesKey);
+        
+        return aes.decrypt(encryptedData);
     }
 
     public KeyPair getKeyPair() {

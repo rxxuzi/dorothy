@@ -137,7 +137,7 @@ public class TextEditorPanel extends JPanel {
         infoPanel.setBackground(new Color(245, 245, 245));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        JLabel infoLabel = new JLabel("RSA encryption limit: ~245 bytes");
+        JLabel infoLabel = new JLabel("Text is securely encrypted using AES+RSA");
         infoLabel.setFont(new Font("Segoe UI", Font.ITALIC, 11));
         infoLabel.setForeground(new Color(150, 150, 150));
         infoPanel.add(infoLabel);
@@ -204,14 +204,7 @@ public class TextEditorPanel extends JPanel {
         if (textArea.isEditable()) {
             int bytes = textArea.getText().getBytes().length;
             bytesLabel.setText("(" + bytes + " bytes)");
-
-            if (bytes > 245) {
-                bytesLabel.setForeground(new Color(220, 50, 50));
-            } else if (bytes > 200) {
-                bytesLabel.setForeground(new Color(255, 140, 0));
-            } else {
-                bytesLabel.setForeground(new Color(120, 120, 120));
-            }
+            bytesLabel.setForeground(new Color(120, 120, 120));
         }
     }
 
@@ -236,7 +229,7 @@ public class TextEditorPanel extends JPanel {
             statusLabel.setText("Chunk " + (index + 1) + " - Encrypted");
             statusLabel.setForeground(new Color(220, 50, 50));
             textArea.setBackground(new Color(255, 250, 250));
-            bytesLabel.setText("RSA encryption limit: ~245 bytes");
+            bytesLabel.setText("(Encrypted)");
         } else {
             statusLabel.setText("Chunk " + (index + 1) + " - Plain Text");
             statusLabel.setForeground(new Color(60, 150, 60));
@@ -249,15 +242,6 @@ public class TextEditorPanel extends JPanel {
         if (currentChunk == null || currentChunk.isEncrypted()) return;
 
         String text = textArea.getText();
-
-        // Check text size
-        if (text.getBytes().length > 245) {
-            JOptionPane.showMessageDialog(parent,
-                    "Text is too long for RSA encryption.\nCurrent: " + text.getBytes().length + " bytes\nMaximum: 245 bytes",
-                    "Text Too Long",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
 
         try {
             RSAManager rsaManager = parent.getRSAManager();
@@ -278,7 +262,7 @@ public class TextEditorPanel extends JPanel {
 
             statusLabel.setText("Chunk " + (currentIndex + 1) + " - Encrypted");
             statusLabel.setForeground(new Color(220, 50, 50));
-            bytesLabel.setText("RSA encrypted data");
+            bytesLabel.setText("(Encrypted)");
 
             parent.getChunkPanel().refreshDisplay();
             parent.log("Encrypted chunk " + (currentIndex + 1));

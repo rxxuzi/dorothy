@@ -101,7 +101,7 @@ public class PNGProcessor {
         if (nullPos > 0 && nullPos < data.length - 1) {
             String keyword = new String(data, 0, nullPos);
             String text = new String(data, nullPos + 1, data.length - nullPos - 1);
-            boolean isEncrypted = text.startsWith("RSA:");
+            boolean isEncrypted = text.startsWith("ENC:") || text.startsWith("RSA:");
 
             return new TextChunk(keyword, text, isEncrypted);
         }
