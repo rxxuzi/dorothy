@@ -1,10 +1,10 @@
 package ui;
 
 import cipher.RSAManager;
+import doro.DoroStyle;
 import model.TextChunk;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -32,49 +32,38 @@ public class TextEditorPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(new Color(230, 230, 230), 1),
-                        "Text Content",
-                        TitledBorder.LEFT,
-                        TitledBorder.TOP,
-                        new Font("Segoe UI", Font.PLAIN, 12),
-                        new Color(100, 100, 100)
-                ),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+                DoroStyle.createSubtitledBorder("Text Content"),
+                BorderFactory.createEmptyBorder(DoroStyle.PADDING_MEDIUM, DoroStyle.PADDING_MEDIUM, 
+                                               DoroStyle.PADDING_MEDIUM, DoroStyle.PADDING_MEDIUM)
         ));
 
         // Top panel - keyword and status
-        JPanel topPanel = new JPanel(new BorderLayout(10, 5));
-        topPanel.setBackground(Color.WHITE);
+        JPanel topPanel = DoroStyle.createPanel();
+        topPanel.setLayout(new BorderLayout(DoroStyle.PADDING_MEDIUM, DoroStyle.PADDING_SMALL));
 
-        JPanel keywordPanel = new JPanel(new BorderLayout(5, 0));
-        keywordPanel.setBackground(Color.WHITE);
+        JPanel keywordPanel = DoroStyle.createPanel();
+        keywordPanel.setLayout(new BorderLayout(DoroStyle.PADDING_SMALL, 0));
 
         JLabel keywordLabel = new JLabel("Keyword:");
-        keywordLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        keywordLabel.setForeground(new Color(60, 60, 60));
+        keywordLabel.setFont(DoroStyle.FONT_DEFAULT);
+        keywordLabel.setForeground(DoroStyle.TEXT_PRIMARY);
 
-        keywordField = new JTextField("Comment");
-        keywordField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        keywordField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
-                BorderFactory.createEmptyBorder(5, 8, 5, 8)
-        ));
+        keywordField = DoroStyle.createTextField("Comment");
 
         keywordPanel.add(keywordLabel, BorderLayout.WEST);
         keywordPanel.add(keywordField, BorderLayout.CENTER);
 
         // Status panel
-        JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        statusPanel.setBackground(Color.WHITE);
+        JPanel statusPanel = DoroStyle.createPanel();
+        statusPanel.setLayout(new FlowLayout(FlowLayout.LEFT, DoroStyle.PADDING_MEDIUM, 0));
 
         statusLabel = new JLabel("No chunk selected");
-        statusLabel.setFont(new Font("Segoe UI", Font.ITALIC, 11));
-        statusLabel.setForeground(new Color(120, 120, 120));
+        statusLabel.setFont(DoroStyle.FONT_ITALIC);
+        statusLabel.setForeground(DoroStyle.TEXT_SECONDARY);
 
         bytesLabel = new JLabel("");
-        bytesLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        bytesLabel.setForeground(new Color(120, 120, 120));
+        bytesLabel.setFont(DoroStyle.FONT_SMALL);
+        bytesLabel.setForeground(DoroStyle.TEXT_SECONDARY);
 
         statusPanel.add(statusLabel);
         statusPanel.add(bytesLabel);
@@ -83,12 +72,7 @@ public class TextEditorPanel extends JPanel {
         topPanel.add(statusPanel, BorderLayout.SOUTH);
 
         // Center panel - text area
-        textArea = new JTextArea();
-        textArea.setFont(new Font("Consolas", Font.PLAIN, 13));
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        textArea.setBackground(new Color(250, 250, 250));
+        textArea = DoroStyle.createTextArea();
 
         // Add document listener for real-time byte count
         textArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -97,19 +81,17 @@ public class TextEditorPanel extends JPanel {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { updateByteCount(); }
         });
 
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
-        scrollPane.getViewport().setBackground(Color.WHITE);
+        JScrollPane scrollPane = DoroStyle.createScrollPane(textArea);
 
         // Bottom panel - buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBackground(Color.WHITE);
+        JPanel buttonPanel = DoroStyle.createPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, DoroStyle.PADDING_MEDIUM, DoroStyle.PADDING_MEDIUM));
 
-        // Create modern styled buttons
-        encryptButton = createModernButton("Encrypt", new Color(255, 107, 129));
-        decryptButton = createModernButton("Decrypt", new Color(156, 89, 182));
-        updateButton = createModernButton("Update", new Color(66, 165, 245));
-        clearButton = createModernButton("Clear", new Color(120, 120, 120));
+        // Create styled buttons
+        encryptButton = DoroStyle.createButton("Encrypt", DoroStyle.DORO_DARK_PINK);
+        decryptButton = DoroStyle.createButton("Decrypt", DoroStyle.DORO_PURPLE);
+        updateButton = DoroStyle.createButton("Update", DoroStyle.SUCCESS_GREEN);
+        clearButton = DoroStyle.createButton("Clear", DoroStyle.TEXT_SECONDARY);
 
         // Add action listeners
         encryptButton.addActionListener(e -> encryptCurrentChunk());
@@ -134,16 +116,17 @@ public class TextEditorPanel extends JPanel {
 
         // Info panel
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        infoPanel.setBackground(new Color(245, 245, 245));
-        infoPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        infoPanel.setBackground(DoroStyle.BACKGROUND_LIGHTER);
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(DoroStyle.PADDING_SMALL, DoroStyle.PADDING_MEDIUM, 
+                                                           DoroStyle.PADDING_SMALL, DoroStyle.PADDING_MEDIUM));
 
         JLabel infoLabel = new JLabel("Text is securely encrypted using AES+RSA");
-        infoLabel.setFont(new Font("Segoe UI", Font.ITALIC, 11));
-        infoLabel.setForeground(new Color(150, 150, 150));
+        infoLabel.setFont(DoroStyle.FONT_ITALIC);
+        infoLabel.setForeground(DoroStyle.TEXT_DISABLED);
         infoPanel.add(infoLabel);
 
-        JPanel bottomContainer = new JPanel(new BorderLayout());
-        bottomContainer.setBackground(Color.WHITE);
+        JPanel bottomContainer = DoroStyle.createPanel();
+        bottomContainer.setLayout(new BorderLayout());
         bottomContainer.add(buttonPanel, BorderLayout.CENTER);
         bottomContainer.add(infoPanel, BorderLayout.SOUTH);
 
@@ -156,55 +139,12 @@ public class TextEditorPanel extends JPanel {
         setControlsEnabled(false);
     }
 
-    private JButton createModernButton(String text, Color color) {
-        JButton button = new JButton(text) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Button background
-                if (getModel().isPressed()) {
-                    g2d.setColor(color.darker());
-                } else if (getModel().isRollover()) {
-                    g2d.setColor(color.brighter());
-                } else if (!isEnabled()) {
-                    g2d.setColor(new Color(230, 230, 230));
-                } else {
-                    g2d.setColor(color);
-                }
-
-                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-
-                // Button text
-                FontMetrics fm = g2d.getFontMetrics();
-                int x = (getWidth() - fm.stringWidth(getText())) / 2;
-                int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-
-                if (!isEnabled()) {
-                    g2d.setColor(new Color(180, 180, 180));
-                } else {
-                    g2d.setColor(Color.WHITE);
-                }
-                g2d.drawString(getText(), x, y);
-            }
-        };
-
-        button.setPreferredSize(new Dimension(100, 35));
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        return button;
-    }
 
     private void updateByteCount() {
         if (textArea.isEditable()) {
             int bytes = textArea.getText().getBytes().length;
             bytesLabel.setText("(" + bytes + " bytes)");
-            bytesLabel.setForeground(new Color(120, 120, 120));
+            bytesLabel.setForeground(DoroStyle.TEXT_SECONDARY);
         }
     }
 
@@ -227,13 +167,13 @@ public class TextEditorPanel extends JPanel {
 
         if (isEncrypted) {
             statusLabel.setText("Chunk " + (index + 1) + " - Encrypted");
-            statusLabel.setForeground(new Color(220, 50, 50));
-            textArea.setBackground(new Color(255, 250, 250));
+            statusLabel.setForeground(DoroStyle.ERROR_RED);
+            textArea.setBackground(DoroStyle.DORO_WHITE);
             bytesLabel.setText("(Encrypted)");
         } else {
             statusLabel.setText("Chunk " + (index + 1) + " - Plain Text");
-            statusLabel.setForeground(new Color(60, 150, 60));
-            textArea.setBackground(new Color(250, 250, 250));
+            statusLabel.setForeground(DoroStyle.SUCCESS_GREEN);
+            textArea.setBackground(DoroStyle.BACKGROUND_LIGHT);
             updateByteCount();
         }
     }
@@ -253,7 +193,7 @@ public class TextEditorPanel extends JPanel {
 
             textArea.setText(encrypted);
             textArea.setEditable(false);
-            textArea.setBackground(new Color(255, 250, 250));
+            textArea.setBackground(DoroStyle.DORO_WHITE);
             keywordField.setEditable(false);
             encryptButton.setEnabled(false);
             decryptButton.setEnabled(true);
@@ -261,7 +201,7 @@ public class TextEditorPanel extends JPanel {
             clearButton.setEnabled(false);
 
             statusLabel.setText("Chunk " + (currentIndex + 1) + " - Encrypted");
-            statusLabel.setForeground(new Color(220, 50, 50));
+            statusLabel.setForeground(DoroStyle.ERROR_RED);
             bytesLabel.setText("(Encrypted)");
 
             parent.getChunkPanel().refreshDisplay();
@@ -288,7 +228,7 @@ public class TextEditorPanel extends JPanel {
 
             textArea.setText(decrypted);
             textArea.setEditable(true);
-            textArea.setBackground(new Color(250, 250, 250));
+            textArea.setBackground(DoroStyle.BACKGROUND_LIGHT);
             keywordField.setEditable(true);
             encryptButton.setEnabled(true);
             decryptButton.setEnabled(false);
@@ -296,7 +236,7 @@ public class TextEditorPanel extends JPanel {
             clearButton.setEnabled(true);
 
             statusLabel.setText("Chunk " + (currentIndex + 1) + " - Plain Text");
-            statusLabel.setForeground(new Color(60, 150, 60));
+            statusLabel.setForeground(DoroStyle.SUCCESS_GREEN);
             updateByteCount();
 
             parent.getChunkPanel().refreshDisplay();
@@ -333,9 +273,7 @@ public class TextEditorPanel extends JPanel {
 
             // Visual feedback
             statusLabel.setText("Chunk " + (currentIndex + 1) + " - Saved");
-            Timer timer = new Timer(2000, e -> {
-                statusLabel.setText("Chunk " + (currentIndex + 1) + " - Plain Text");
-            });
+            Timer timer = new Timer(2000, e -> statusLabel.setText("Chunk " + (currentIndex + 1) + " - Plain Text"));
             timer.setRepeats(false);
             timer.start();
 
@@ -357,7 +295,7 @@ public class TextEditorPanel extends JPanel {
         textArea.setText("");
         keywordField.setText("Comment");
         statusLabel.setText("No chunk selected");
-        statusLabel.setForeground(new Color(120, 120, 120));
+        statusLabel.setForeground(DoroStyle.TEXT_SECONDARY);
         bytesLabel.setText("");
         setControlsEnabled(false);
     }

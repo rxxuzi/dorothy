@@ -8,21 +8,10 @@ import java.awt.event.*;
 import java.io.File;
 
 public class QuickActionsPanel extends JPanel {
-    private DoroFrame parent;
+    private final DoroFrame parent;
     private JLabel fileInfoLabel;
-    private JButton openButton;
-    private JButton saveButton;
-    private JButton addChunkButton;
-    private JButton encryptAllButton;
-    private JButton decryptAllButton;
 
-    // Modern color scheme
-    private static final Color BG_COLOR = new Color(250, 250, 250);
-    private static final Color ACCENT_PINK = new Color(255, 107, 129);
-    private static final Color ACCENT_PURPLE = new Color(156, 89, 182);
-    private static final Color ACCENT_BLUE = new Color(66, 165, 245);
-    private static final Color TEXT_PRIMARY = new Color(60, 60, 60);
-    private static final Color TEXT_SECONDARY = new Color(120, 120, 120);
+    // Using DoroStyle color constants
 
     public QuickActionsPanel(DoroFrame parent) {
         this.parent = parent;
@@ -31,10 +20,10 @@ public class QuickActionsPanel extends JPanel {
 
     private void initializePanel() {
         setLayout(new BorderLayout());
-        setBackground(BG_COLOR);
+        setBackground(DoroStyle.BACKGROUND_LIGHT);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
-                BorderFactory.createEmptyBorder(15, 20, 15, 20)
+                BorderFactory.createMatteBorder(0, 0, 1, 0, DoroStyle.BORDER_LIGHT),
+                BorderFactory.createEmptyBorder(DoroStyle.PADDING_LARGE, DoroStyle.PADDING_LARGE, DoroStyle.PADDING_LARGE, DoroStyle.PADDING_LARGE)
         ));
 
         // Left side - Logo and file info
@@ -42,12 +31,12 @@ public class QuickActionsPanel extends JPanel {
         leftPanel.setOpaque(false);
 
         JLabel logoLabel = new JLabel("Dorothy");
-        logoLabel.setFont(new Font("Segoe Script", Font.BOLD, 20));
-        logoLabel.setForeground(ACCENT_PINK);
+        logoLabel.setFont(DoroStyle.FONT_LOGO);
+        logoLabel.setForeground(DoroStyle.DORO_DARK_PINK);
 
         fileInfoLabel = new JLabel("No file loaded");
-        fileInfoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        fileInfoLabel.setForeground(TEXT_SECONDARY);
+        fileInfoLabel.setFont(DoroStyle.FONT_LARGE);
+        fileInfoLabel.setForeground(DoroStyle.TEXT_SECONDARY);
 
         leftPanel.add(logoLabel);
         leftPanel.add(new JSeparator(SwingConstants.VERTICAL));
@@ -57,11 +46,11 @@ public class QuickActionsPanel extends JPanel {
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 0));
         centerPanel.setOpaque(false);
 
-        openButton = createActionButton("Open", ACCENT_BLUE);
-        saveButton = createActionButton("Save", ACCENT_BLUE);
-        addChunkButton = createActionButton("+ Add Text", ACCENT_PURPLE);
-        encryptAllButton = createActionButton("Encrypt All", ACCENT_PINK);
-        decryptAllButton = createActionButton("Decrypt All", ACCENT_PURPLE);
+        JButton openButton = createActionButton("Open", DoroStyle.DORO_PURPLE);
+        JButton saveButton = createActionButton("Save", DoroStyle.DORO_PURPLE);
+        JButton addChunkButton = createActionButton("+ Add Text", DoroStyle.DORO_PINK);
+        JButton encryptAllButton = createActionButton("Encrypt All", DoroStyle.DORO_DARK_PINK);
+        JButton decryptAllButton = createActionButton("Decrypt All", DoroStyle.DORO_PINK);
 
         // Add action listeners
         openButton.addActionListener(e -> parent.openFile());
@@ -90,11 +79,11 @@ public class QuickActionsPanel extends JPanel {
         rightPanel.setOpaque(false);
 
         JLabel keyStatusLabel = new JLabel("Keys Ready");
-        keyStatusLabel.setForeground(new Color(76, 175, 80));
-        keyStatusLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        keyStatusLabel.setForeground(DoroStyle.SUCCESS_GREEN);
+        keyStatusLabel.setFont(DoroStyle.FONT_DEFAULT);
 
-        JLabel keyIcon = new JLabel("\u2713"); // Checkmark
-        keyIcon.setForeground(new Color(76, 175, 80));
+        JLabel keyIcon = new JLabel("✓"); // Checkmark
+        keyIcon.setForeground(DoroStyle.SUCCESS_GREEN);
         keyIcon.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         rightPanel.add(keyIcon);
@@ -107,15 +96,9 @@ public class QuickActionsPanel extends JPanel {
     }
 
     private JButton createActionButton(String text, Color bgColor) {
-        JButton button = DoroStyle.renderButton(text,bgColor);
-
+        JButton button = DoroStyle.createButton(text, bgColor);
         button.setPreferredSize(new Dimension(110, 32));
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
+        
         // Add hover effect
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -135,7 +118,7 @@ public class QuickActionsPanel extends JPanel {
     private Component createSeparator() {
         JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
         separator.setPreferredSize(new Dimension(1, 20));
-        separator.setForeground(new Color(230, 230, 230));
+        separator.setForeground(DoroStyle.BORDER_LIGHT);
         return separator;
     }
 
@@ -145,11 +128,11 @@ public class QuickActionsPanel extends JPanel {
             long size = file.length();
             String sizeStr = formatFileSize(size);
             fileInfoLabel.setText(name + " (" + sizeStr + ")");
-            fileInfoLabel.setForeground(TEXT_PRIMARY);
-            fileInfoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            fileInfoLabel.setForeground(DoroStyle.TEXT_PRIMARY);
+            fileInfoLabel.setFont(DoroStyle.FONT_LARGE);
         } else {
             fileInfoLabel.setText("No file loaded");
-            fileInfoLabel.setForeground(TEXT_SECONDARY);
+            fileInfoLabel.setForeground(DoroStyle.TEXT_SECONDARY);
         }
     }
 

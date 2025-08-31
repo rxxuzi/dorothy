@@ -1,14 +1,15 @@
 package ui;
 
+import doro.DoroStyle;
 import model.TextChunk;
+
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
-import static doro.DoroStyle.renderButton;
-import static ui.DoroFrame.*;
+import static doro.DoroStyle.*;
 
 public class ChunkPanel extends JPanel {
     private JList<String> chunkList;
@@ -22,27 +23,20 @@ public class ChunkPanel extends JPanel {
 
     private void initializePanel() {
         setLayout(new BorderLayout());
-        setBackground(DOROTHY_WHITE);
+        setBackground(DORO_WHITE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 2),
-                        "Text Chunks",
-                        TitledBorder.LEFT,
-                        TitledBorder.TOP,
-                        new Font("Segoe UI", Font.BOLD, 13),
-                        new Color(100, 100, 100)  // Dark gray for title
-                ),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+                DoroStyle.createTitledBorder("Text Chunks"),
+                BorderFactory.createEmptyBorder(PADDING_SMALL, PADDING_SMALL, PADDING_SMALL, PADDING_SMALL)
         ));
 
         // Create list with custom renderer
         chunkListModel = new DefaultListModel<>();
         chunkList = new JList<>(chunkListModel);
         chunkList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        chunkList.setBackground(DOROTHY_WHITE);
-        chunkList.setSelectionBackground(DOROTHY_PURPLE);
+        chunkList.setBackground(DORO_WHITE);
+        chunkList.setSelectionBackground(DORO_PURPLE);
         chunkList.setSelectionForeground(Color.WHITE);
-        chunkList.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        chunkList.setFont(FONT_DEFAULT);
 
         chunkList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
@@ -51,20 +45,20 @@ public class ChunkPanel extends JPanel {
                 JLabel label = (JLabel) super.getListCellRendererComponent(
                         list, value, index, isSelected, cellHasFocus);
 
-                label.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
+                label.setBorder(BorderFactory.createEmptyBorder(8, PADDING_MEDIUM, 8, PADDING_MEDIUM));
 
                 if (isSelected) {
-                    label.setBackground(DOROTHY_PURPLE);
+                    label.setBackground(DORO_PURPLE);
                     label.setForeground(Color.WHITE);
-                    label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                    label.setFont(FONT_SUBTITLE);
                 } else {
-                    label.setBackground(DOROTHY_WHITE);
+                    label.setBackground(DORO_WHITE);
                     if (value.toString().contains("[ENCRYPTED]")) {
-                        label.setForeground(new Color(220, 50, 50));  // Red for encrypted
-                        label.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+                        label.setForeground(ERROR_RED);
+                        label.setFont(FONT_ITALIC);
                     } else {
-                        label.setForeground(new Color(60, 60, 60));  // Dark gray for normal
-                        label.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+                        label.setForeground(TEXT_PRIMARY);
+                        label.setFont(FONT_DEFAULT);
                     }
                 }
 
@@ -102,10 +96,10 @@ public class ChunkPanel extends JPanel {
             }
         });
 
-        JScrollPane scrollPane = new JScrollPane(chunkList);
-        scrollPane.setBorder(BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 1));
+        JScrollPane scrollPane = DoroStyle.createScrollPane(chunkList);
+        scrollPane.setBorder(BorderFactory.createLineBorder(DORO_LIGHT_PINK, 1));
         scrollPane.setPreferredSize(new Dimension(300, 400));
-        scrollPane.getViewport().setBackground(DOROTHY_WHITE);
+        scrollPane.getViewport().setBackground(DORO_WHITE);
 
         // Create button panel with fixed button colors
         JPanel buttonPanel = createButtonPanel();
@@ -117,7 +111,7 @@ public class ChunkPanel extends JPanel {
 
     private JPopupMenu createPopupMenu() {
         JPopupMenu popupMenu = new JPopupMenu();
-        popupMenu.setBackground(Color.WHITE);
+        popupMenu.setBackground(DORO_WHITE);
 
         JMenuItem addItem = new JMenuItem("Add Chunk");
         JMenuItem duplicateItem = new JMenuItem("Duplicate");
@@ -143,13 +137,13 @@ public class ChunkPanel extends JPanel {
     }
 
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBackground(DOROTHY_WHITE);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, PADDING_MEDIUM, PADDING_MEDIUM));
+        buttonPanel.setBackground(DORO_WHITE);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SMALL, 0, PADDING_SMALL, 0));
 
-        JButton addButton = createStyledButton("Add", DOROTHY_PINK);
-        JButton deleteButton = createStyledButton("Delete", DOROTHY_PURPLE);
-        JButton clearButton = createStyledButton("Clear All", DOROTHY_DARK_PINK);
+        JButton addButton = DoroStyle.createSmallButton("Add", DORO_PINK);
+        JButton deleteButton = DoroStyle.createSmallButton("Delete", DORO_PURPLE);
+        JButton clearButton = DoroStyle.createSmallButton("Clear All", DORO_DARK_PINK);
 
         addButton.addActionListener(e -> addChunk());
         deleteButton.addActionListener(e -> deleteChunk());
@@ -162,17 +156,6 @@ public class ChunkPanel extends JPanel {
         return buttonPanel;
     }
 
-    private JButton createStyledButton(String text, Color bgColor) {
-        JButton button = renderButton(text, bgColor);
-        button.setPreferredSize(new Dimension(90, 30));
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        return button;
-    }
 
     public void updateChunkList(List<TextChunk> chunks) {
         chunkListModel.clear();
@@ -214,56 +197,54 @@ public class ChunkPanel extends JPanel {
         dialog.setSize(450, 300);
         dialog.setLocationRelativeTo(parent);
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel mainPanel = new JPanel(new BorderLayout(PADDING_MEDIUM, PADDING_MEDIUM));
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(PADDING_LARGE, PADDING_LARGE, PADDING_LARGE, PADDING_LARGE));
 
         // Keyword panel
-        JPanel keywordPanel = new JPanel(new BorderLayout(10, 5));
+        JPanel keywordPanel = new JPanel(new BorderLayout(PADDING_MEDIUM, PADDING_SMALL));
         keywordPanel.setBackground(Color.WHITE);
 
         JLabel keywordLabel = new JLabel("Keyword:");
-        keywordLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        keywordLabel.setForeground(new Color(60, 60, 60));
+        keywordLabel.setFont(FONT_TITLE);
+        keywordLabel.setForeground(TEXT_PRIMARY);
 
-        JTextField keywordField = new JTextField("Comment");
-        keywordField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTextField keywordField = DoroStyle.createTextField("Comment");
+        keywordField.setFont(FONT_LARGE);
         keywordField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 2),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)
+                BorderFactory.createLineBorder(DORO_LIGHT_PINK, 2),
+                BorderFactory.createEmptyBorder(8, PADDING_MEDIUM, 8, PADDING_MEDIUM)
         ));
-        keywordField.setBackground(new Color(255, 250, 252));
+        keywordField.setBackground(DORO_WHITE);
 
         keywordPanel.add(keywordLabel, BorderLayout.NORTH);
         keywordPanel.add(keywordField, BorderLayout.CENTER);
 
         // Text panel
-        JPanel textPanel = new JPanel(new BorderLayout(10, 5));
+        JPanel textPanel = new JPanel(new BorderLayout(PADDING_MEDIUM, PADDING_SMALL));
         textPanel.setBackground(Color.WHITE);
 
         JLabel textLabel = new JLabel("Text:");
-        textLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        textLabel.setForeground(new Color(60, 60, 60));
+        textLabel.setFont(FONT_TITLE);
+        textLabel.setForeground(TEXT_PRIMARY);
 
-        JTextArea textArea = new JTextArea(6, 30);
-        textArea.setFont(new Font("Consolas", Font.PLAIN, 13));
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JTextArea textArea = DoroStyle.createTextArea();
+        textArea.setRows(6);
+        textArea.setColumns(30);
 
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBorder(BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 2));
-        scrollPane.setBackground(new Color(255, 250, 252));
+        scrollPane.setBorder(BorderFactory.createLineBorder(DORO_LIGHT_PINK, 2));
+        scrollPane.setBackground(DORO_WHITE);
 
         textPanel.add(textLabel, BorderLayout.NORTH);
         textPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, PADDING_MEDIUM, 0));
         buttonPanel.setBackground(Color.WHITE);
 
-        JButton okButton = createDialogButton("OK", DOROTHY_PINK);
-        JButton cancelButton = createDialogButton("Cancel", new Color(150, 150, 150));
+        JButton okButton = DoroStyle.createSmallButton("OK", DORO_PINK);
+        JButton cancelButton = DoroStyle.createSmallButton("Cancel", TEXT_DISABLED);
 
         okButton.addActionListener(e -> {
             String keyword = keywordField.getText().trim();
@@ -303,17 +284,6 @@ public class ChunkPanel extends JPanel {
         dialog.setVisible(true);
     }
 
-    private JButton createDialogButton(String text, Color bgColor) {
-        JButton button = renderButton(text, bgColor);
-        button.setPreferredSize(new Dimension(90, 32));
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        return button;
-    }
 
     public void deleteChunk() {
         int index = chunkList.getSelectedIndex();

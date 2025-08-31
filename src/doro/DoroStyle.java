@@ -5,13 +5,13 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class DoroStyle {
-    // Dorothy Theme Colors
-    public static final Color DOROTHY_PINK = new Color(255, 182, 193);
-    public static final Color DOROTHY_LIGHT_PINK = new Color(255, 218, 224);
-    public static final Color DOROTHY_DARK_PINK = new Color(255, 105, 180);
-    public static final Color DOROTHY_PURPLE = new Color(186, 146, 234);
-    public static final Color DOROTHY_LIGHT_PURPLE = new Color(221, 196, 255);
-    public static final Color DOROTHY_WHITE = new Color(255, 250, 252);
+    // Doro Theme Colors
+    public static final Color DORO_PINK = new Color(255, 182, 193);
+    public static final Color DORO_LIGHT_PINK = new Color(255, 218, 224);
+    public static final Color DORO_DARK_PINK = new Color(255, 105, 180);
+    public static final Color DORO_PURPLE = new Color(186, 146, 234);
+    public static final Color DORO_LIGHT_PURPLE = new Color(221, 196, 255);
+    public static final Color DORO_WHITE = new Color(255, 250, 252);
     
     // UI Colors
     public static final Color TEXT_PRIMARY = new Color(60, 60, 60);
@@ -102,7 +102,7 @@ public class DoroStyle {
     // Border Factory Methods
     public static TitledBorder createTitledBorder(String title) {
         return BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 2),
+            BorderFactory.createLineBorder(DORO_LIGHT_PINK, 2),
             title,
             TitledBorder.LEFT,
             TitledBorder.TOP,
@@ -158,7 +158,7 @@ public class DoroStyle {
                 Graphics2D g2d = (Graphics2D) g;
                 GradientPaint gradient = new GradientPaint(
                     0, 0, Color.WHITE,
-                    0, getHeight(), DOROTHY_LIGHT_PINK
+                    0, getHeight(), DORO_LIGHT_PINK
                 );
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());

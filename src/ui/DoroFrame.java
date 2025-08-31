@@ -3,6 +3,7 @@ package ui;
 import model.*;
 import cipher.*;
 import png.*;
+import doro.DoroStyle;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -26,16 +27,9 @@ public class DoroFrame extends JFrame {
     // Data
     private File currentFile;
     private List<TextChunk> textChunks;
-    private RSAManager rsaManager;
-    private PNGProcessor pngProcessor;
+    private final RSAManager rsaManager;
+    private final PNGProcessor pngProcessor;
 
-    // Colors - Dorothy theme
-    public static final Color DOROTHY_PINK = new Color(255, 182, 193);
-    public static final Color DOROTHY_LIGHT_PINK = new Color(255, 218, 224);
-    public static final Color DOROTHY_DARK_PINK = new Color(255, 105, 180);
-    public static final Color DOROTHY_PURPLE = new Color(186, 146, 234);
-    public static final Color DOROTHY_LIGHT_PURPLE = new Color(221, 196, 255);
-    public static final Color DOROTHY_WHITE = new Color(255, 250, 252);
 
     public DoroFrame() {
         rsaManager = new RSAManager();
@@ -68,8 +62,8 @@ public class DoroFrame extends JFrame {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 GradientPaint gradient = new GradientPaint(
-                        0, 0, DOROTHY_WHITE,
-                        0, getHeight(), DOROTHY_LIGHT_PINK
+                        0, 0, DoroStyle.DORO_WHITE,
+                        0, getHeight(), DoroStyle.DORO_LIGHT_PINK
                 );
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
@@ -102,8 +96,8 @@ public class DoroFrame extends JFrame {
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(DOROTHY_WHITE);
-        menuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, DOROTHY_LIGHT_PINK));
+        menuBar.setBackground(DoroStyle.DORO_WHITE);
+        menuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, DoroStyle.DORO_LIGHT_PINK));
 
         // File menu
         JMenu fileMenu = new JMenu("File");
@@ -204,8 +198,8 @@ public class DoroFrame extends JFrame {
 
         // Create tabbed pane for different views
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.setBackground(DOROTHY_WHITE);
-        tabbedPane.setForeground(DOROTHY_DARK_PINK);
+        tabbedPane.setBackground(DoroStyle.DORO_WHITE);
+        tabbedPane.setForeground(DoroStyle.DORO_DARK_PINK);
 
         // Tab 1: Editor view (split pane)
         JSplitPane editorSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -244,7 +238,7 @@ public class DoroFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(logArea);
         scrollPane.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 1),
+                BorderFactory.createLineBorder(DoroStyle.DORO_LIGHT_PINK, 1),
                 "Activity Log",
                 TitledBorder.LEFT,
                 TitledBorder.TOP,
@@ -299,16 +293,16 @@ public class DoroFrame extends JFrame {
 
     private void applyTheme() {
         try {
-            UIManager.put("TabbedPane.selected", DOROTHY_LIGHT_PINK);
-            UIManager.put("TabbedPane.contentAreaColor", DOROTHY_WHITE);
-            UIManager.put("Button.background", DOROTHY_PINK);
+            UIManager.put("TabbedPane.selected", DoroStyle.DORO_LIGHT_PINK);
+            UIManager.put("TabbedPane.contentAreaColor", DoroStyle.DORO_WHITE);
+            UIManager.put("Button.background", DoroStyle.DORO_PINK);
             UIManager.put("Button.foreground", Color.WHITE);
-            UIManager.put("Button.focus", DOROTHY_PURPLE);
-            UIManager.put("TextField.background", DOROTHY_WHITE);
-            UIManager.put("TextArea.background", DOROTHY_WHITE);
-            UIManager.put("List.background", DOROTHY_WHITE);
-            UIManager.put("List.selectionBackground", DOROTHY_LIGHT_PURPLE);
-            UIManager.put("ScrollBar.thumb", DOROTHY_PINK);
+            UIManager.put("Button.focus", DoroStyle.DORO_PURPLE);
+            UIManager.put("TextField.background", DoroStyle.DORO_WHITE);
+            UIManager.put("TextArea.background", DoroStyle.DORO_WHITE);
+            UIManager.put("List.background", DoroStyle.DORO_WHITE);
+            UIManager.put("List.selectionBackground", DoroStyle.DORO_LIGHT_PURPLE);
+            UIManager.put("ScrollBar.thumb", DoroStyle.DORO_PINK);
         } catch (Exception e) {
             // Fallback to default theme
         }
@@ -321,7 +315,7 @@ public class DoroFrame extends JFrame {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Draw a pink circle
-        g2d.setColor(DOROTHY_PINK);
+        g2d.setColor(DoroStyle.DORO_PINK);
         g2d.fillOval(4, 4, 24, 24);
 
         // Draw a white "D"
@@ -540,13 +534,28 @@ public class DoroFrame extends JFrame {
                 SwingConstants.CENTER
         );
 
+        JButton okButton = getOkButton(dialog);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.add(okButton);
+
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(textLabel, BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.add(panel);
+        dialog.setVisible(true);
+    }
+
+    private JButton getOkButton(JDialog dialog) {
         JButton okButton = new JButton("OK") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                Color bgColor = DOROTHY_PINK;
+                Color bgColor = DoroStyle.DORO_PINK;
                 if (getModel().isPressed()) {
                     g2d.setColor(bgColor.darker());
                 } else if (getModel().isRollover()) {
@@ -573,17 +582,7 @@ public class DoroFrame extends JFrame {
         okButton.setFocusPainted(false);
         okButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         okButton.addActionListener(e -> dialog.dispose());
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.add(okButton);
-
-        panel.add(titleLabel, BorderLayout.NORTH);
-        panel.add(textLabel, BorderLayout.CENTER);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
-
-        dialog.add(panel);
-        dialog.setVisible(true);
+        return okButton;
     }
 
     private void showQuickGuide() {
@@ -599,16 +598,19 @@ public class DoroFrame extends JFrame {
         JLabel titleLabel = new JLabel("<html><h3 style='color:#FF69B4'>Quick Guide</h3></html>");
 
         JTextArea guideText = new JTextArea(
-                "How to use Dorothy:\n\n" +
-                        "1. Drag & Drop or Open a PNG file\n" +
-                        "2. Add/Edit text chunks in the editor\n" +
-                        "3. Encrypt sensitive data with RSA encryption\n" +
-                        "4. Save your modified PNG file\n\n" +
-                        "Tips:\n" +
-                        "• RSA limit: ~245 bytes per chunk\n" +
-                        "• Keep your private key safe!\n" +
-                        "• Share public keys for secure communication\n" +
-                        "• Use Ctrl+S to quickly save changes"
+                """
+                        How to use Dorothy:
+
+                        1. Drag & Drop or Open a PNG file
+                        2. Add/Edit text chunks in the editor
+                        3. Encrypt sensitive data with RSA encryption
+                        4. Save your modified PNG file
+
+                        Tips:
+                        • RSA limit: ~245 bytes per chunk
+                        • Keep your private key safe!
+                        • Share public keys for secure communication
+                        • Use Ctrl+S to quickly save changes"""
         );
         guideText.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         guideText.setEditable(false);
@@ -618,7 +620,7 @@ public class DoroFrame extends JFrame {
         guideText.setWrapStyleWord(true);
 
         JScrollPane scrollPane = new JScrollPane(guideText);
-        scrollPane.setBorder(BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 1));
+        scrollPane.setBorder(BorderFactory.createLineBorder(DoroStyle.DORO_LIGHT_PINK, 1));
 
         JButton okButton = new JButton("OK") {
             @Override
@@ -626,7 +628,7 @@ public class DoroFrame extends JFrame {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                Color bgColor = DOROTHY_PURPLE;
+                Color bgColor = DoroStyle.DORO_PURPLE;
                 if (getModel().isPressed()) {
                     g2d.setColor(bgColor.darker());
                 } else if (getModel().isRollover()) {

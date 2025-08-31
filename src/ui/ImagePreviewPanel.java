@@ -2,12 +2,13 @@ package ui;
 
 import doro.DoroStyle;
 
-import javax.swing.*;
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import static ui.DoroFrame.*;
+
+import static doro.DoroStyle.*;
 
 public class ImagePreviewPanel extends JPanel {
     private final DoroFrame parent;
@@ -23,17 +24,18 @@ public class ImagePreviewPanel extends JPanel {
 
     private void initializePanel() {
         setLayout(new BorderLayout());
-        setBackground(DOROTHY_WHITE);
+        setBackground(DORO_WHITE);
 
         // Control panel with better button styling
-        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        controlPanel.setBackground(DOROTHY_LIGHT_PINK);
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, DoroStyle.PADDING_MEDIUM, DoroStyle.PADDING_MEDIUM));
+        controlPanel.setBackground(DORO_LIGHT_PINK);
+        Insets insets = DoroStyle.getDefaultInsets();
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right));
 
-        JButton zoomInButton = createControlButton("Zoom In (+)", DOROTHY_PURPLE);
-        JButton zoomOutButton = createControlButton("Zoom Out (-)", DOROTHY_PURPLE);
-        JButton fitButton = createControlButton("Fit to Window", DOROTHY_DARK_PINK);
-        JButton actualSizeButton = createControlButton("Actual Size", DOROTHY_DARK_PINK);
+        JButton zoomInButton = DoroStyle.createButton("Zoom In (+)", DORO_PURPLE);
+        JButton zoomOutButton = DoroStyle.createButton("Zoom Out (-)", DORO_PURPLE);
+        JButton fitButton = DoroStyle.createButton("Fit to Window", DORO_DARK_PINK);
+        JButton actualSizeButton = DoroStyle.createButton("Actual Size", DORO_DARK_PINK);
 
         zoomInButton.addActionListener(e -> zoom(1.25));
         zoomOutButton.addActionListener(e -> zoom(0.8));
@@ -47,22 +49,22 @@ public class ImagePreviewPanel extends JPanel {
 
         // Image display area
         imageLabel = new JLabel("Drop a PNG file here or use File → Open", SwingConstants.CENTER);
-        imageLabel.setFont(new Font("Segoe UI", Font.ITALIC, 14));
-        imageLabel.setForeground(new Color(100, 100, 100));
+        imageLabel.setFont(DoroStyle.FONT_ITALIC);
+        imageLabel.setForeground(DoroStyle.TEXT_SECONDARY);
 
-        JScrollPane scrollPane = new JScrollPane(imageLabel);
-        scrollPane.setBackground(DOROTHY_WHITE);
-        scrollPane.getViewport().setBackground(DOROTHY_WHITE);
-        scrollPane.setBorder(BorderFactory.createLineBorder(DOROTHY_LIGHT_PINK, 1));
+        JScrollPane scrollPane = DoroStyle.createScrollPane(imageLabel);
+        scrollPane.setBackground(DORO_WHITE);
+        scrollPane.getViewport().setBackground(DORO_WHITE);
+        scrollPane.setBorder(BorderFactory.createLineBorder(DORO_LIGHT_PINK, 1));
 
         // Info panel
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        infoPanel.setBackground(DOROTHY_WHITE);
-        infoPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, DOROTHY_LIGHT_PINK));
+        infoPanel.setBackground(DORO_WHITE);
+        infoPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, DORO_LIGHT_PINK));
 
         infoLabel = new JLabel("No image loaded", SwingConstants.CENTER);
-        infoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        infoLabel.setForeground(DOROTHY_PURPLE);
+        infoLabel.setFont(DoroStyle.FONT_DEFAULT);
+        infoLabel.setForeground(DORO_PURPLE);
 
         infoPanel.add(infoLabel);
 
@@ -72,18 +74,6 @@ public class ImagePreviewPanel extends JPanel {
         add(infoPanel, BorderLayout.SOUTH);
     }
 
-    private JButton createControlButton(String text, Color bgColor) {
-        JButton button = DoroStyle.renderButton(text, bgColor);
-
-        button.setPreferredSize(new Dimension(120, 32));
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        return button;
-    }
 
     public void loadImage(File file) {
         try {
