@@ -55,21 +55,7 @@ public class DoroFrame extends JFrame {
         }
 
         // Main container with gradient background
-        JPanel mainPanel = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                GradientPaint gradient = new GradientPaint(
-                        0, 0, DoroStyle.DORO_WHITE,
-                        0, getHeight(), DoroStyle.DORO_LIGHT_PINK
-                );
-                g2d.setPaint(gradient);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
-        mainPanel.setOpaque(false);
+        JPanel mainPanel = getjPanel();
 
         // Create menu bar
         setJMenuBar(createMenuBar());
@@ -92,6 +78,25 @@ public class DoroFrame extends JFrame {
         setSize(1200, 800);
         setMinimumSize(new Dimension(900, 600));
         setLocationRelativeTo(null);
+    }
+
+    private static JPanel getjPanel() {
+        JPanel mainPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                GradientPaint gradient = new GradientPaint(
+                        0, 0, DoroStyle.DORO_WHITE,
+                        0, getHeight(), DoroStyle.DORO_LIGHT_PINK
+                );
+                g2d.setPaint(gradient);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        mainPanel.setOpaque(false);
+        return mainPanel;
     }
 
     private JMenuBar createMenuBar() {
@@ -526,7 +531,8 @@ public class DoroFrame extends JFrame {
 
         JLabel textLabel = new JLabel(
                 "<html><center>" +
-                        "<p style='margin-top:10px'>PNG Text Editor with RSA Encryption</p>" +
+                        "<p style='margin-top:10px'>PNG Steganography Tool with Hybrid AES+RSA Encryption</p>" +
+                        "<p style='margin-top:10px;color:#888'>Unlimited text size • Industry-standard security</p>" +
                         "<p style='margin-top:15px;color:#666'>Author: rxxuzi</p>" +
                         "<p style='color:#666'>License: AGPL-3.0</p>" +
                         "<p style='margin-top:10px;color:#999;font-size:10px'>Copyright © 2025</p>" +
@@ -603,14 +609,20 @@ public class DoroFrame extends JFrame {
 
                         1. Drag & Drop or Open a PNG file
                         2. Add/Edit text chunks in the editor
-                        3. Encrypt sensitive data with RSA encryption
+                        3. Encrypt sensitive data (no size limits!)
                         4. Save your modified PNG file
 
-                        Tips:
-                        • RSA limit: ~245 bytes per chunk
+                        Features:
+                        • Hybrid AES+RSA encryption for unlimited text size
+                        • Secure steganography in PNG files
+                        • Auto-save with Ctrl+S
+                        • Drag & drop support
+                        • Export/Import RSA keys for secure sharing
+
+                        Security:
                         • Keep your private key safe!
                         • Share public keys for secure communication
-                        • Use Ctrl+S to quickly save changes"""
+                        • All encryption uses industry-standard algorithms"""
         );
         guideText.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         guideText.setEditable(false);
